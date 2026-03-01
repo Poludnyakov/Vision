@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <img id="uk-crest-pdf" src="images/uk-coat-of-arms.png" alt="" style="display:none">
   <header class="header">
     <div class="header__brand">
       <a href="index.html" class="header__back" aria-label="К выбору страны">←</a>
@@ -67,6 +68,7 @@
           <textarea class="textarea" name="letter_text" placeholder="Соберите в один текст: цель, связи, план. На английском для консульства." rows="8" maxlength="5000"></textarea>
         </div>
         <div class="actions">
+          <button type="button" class="btn btn--outline" id="motivation-generate-ai" title="Нужно настроить VISA_CHAT_API_URL (backend с ИИ)">Сгенерировать черновик с ИИ</button>
           <button type="submit" class="btn btn--primary" id="motivation-save">Сохранить письмо</button>
         </div>
       </form>
@@ -167,6 +169,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
   <script src="export.js"></script>
 </body>
 </html>

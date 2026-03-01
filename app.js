@@ -1152,30 +1152,6 @@
     var visaType = document.getElementById('visa-type').value;
     var profile = getProfileFromForm();
     if (!profile || !profile.personal || !profile.personal.last_name) profile = loadProfile() || {};
-    var fields = buildMockFilledFields(profile, country, visaType);
-    var countryName = COUNTRY_NAMES[country] || country;
-    var visaTypeName = VISA_TYPE_NAMES[visaType] || visaType;
-    if (typeof window.jspdf !== 'undefined') {
-      try {
-        var jsPDF = window.jspdf.jsPDF;
-        var doc = new jsPDF();
-        doc.setFontSize(18);
-        doc.text('Visa Application', 14, 20);
-        doc.setFontSize(11);
-        doc.text(countryName + ', ' + visaTypeName, 14, 28);
-        doc.setFontSize(10);
-        var labels = { surname: 'Surname', first_name: 'First name', birth_date: 'Date of birth', birth_place: 'Place of birth', citizenship: 'Citizenship', passport_number: 'Passport number', passport_issued_at: 'Date of issue', passport_expires_at: 'Expiry date', email: 'Email', phone: 'Phone', address_line: 'Address', city: 'City', postal_code: 'Postal code', country_residence: 'Country of residence', employment_status: 'Employment status', employer_name: 'Employer', position: 'Position', income: 'Income' };
-        var y = 38;
-        Object.keys(fields).forEach(function (k) {
-          var line = (labels[k] || k) + ': ' + String(fields[k]).substring(0, 90);
-          if (line.length > 90) line = line.substring(0, 87) + '...';
-          doc.text(line, 14, y);
-          y += 7;
-        });
-        var filename = 'visa-' + country + '-' + (profile.personal && profile.personal.last_name ? String(profile.personal.last_name).replace(/\s+/g, '-') : 'application') + '.pdf';
-        doc.save(filename);
-      } catch (e) { console.warn('PDF export failed', e); }
-    }
     if (country === 'usa') {
       try { localStorage.setItem(getUsaAppliedStorageKey(), '1'); } catch (_) {}
       showAlert('Ваша заявка в обработке. В меню доступен раздел «Собеседование с консулом» для тренировки перед интервью.', 'Заявка отправлена');
