@@ -1,0 +1,1160 @@
+/* Т-Банк: логотип — жёлтый щит с «T», шрифт Tinkoff Sans, жёлтые кнопки */
+
+/* Tinkoff Sans — проприетарный шрифт. Добавьте файлы в fonts/ и раскомментируйте @font-face:
+@font-face {
+  font-family: 'Tinkoff Sans';
+  src: url('fonts/TinkoffSans-Regular.woff2') format('woff2'),
+       url('fonts/TinkoffSans-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Tinkoff Sans';
+  src: url('fonts/TinkoffSans-Medium.woff2') format('woff2'),
+       url('fonts/TinkoffSans-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Tinkoff Sans';
+  src: url('fonts/TinkoffSans-Bold.woff2') format('woff2'),
+       url('fonts/TinkoffSans-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap');
+
+:root {
+  /* T-Bank palette (по референсу) */
+  --tb-yellow: #FFDD2D;
+  --tb-yellow-hover: #F2D02A;
+  --tb-yellow-soft: rgba(255, 221, 45, 0.15);
+  --tb-black: #0D0D0D;
+  --tb-black-soft: #1A1A1A;
+  --tb-white: #FFFFFF;
+  --tb-gray-bg: #0D0D0D;
+  --tb-gray-card: #161616;
+  --tb-gray-border: #2A2A2A;
+  --tb-gray-nav: #E7EAEB;
+  --tb-gray-text: #A3A3A3;
+  --tb-gray-muted: #737373;
+  --tb-text-dark: #1A1A1A;
+  --tb-error: #EA544A;
+  --tb-success: #36B472;
+  --tb-warning: #FEAE22;
+
+  /* Tinkoff Sans при наличии файлов в fonts/; иначе Onest */
+  --font: 'Tinkoff Sans', 'Onest', system-ui, -apple-system, sans-serif;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-btn: 14px;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 4px 24px rgba(0, 0, 0, 0.5);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--tb-white);
+  background: var(--tb-black);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .screen__title, .card__title {
+  font-family: var(--font);
+  font-weight: 600;
+}
+
+/* Header — Liquid Glass: полупрозрачное «стекло», размытие фона */
+.header {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  isolation: isolate;
+}
+
+.header__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Ссылка на Т-Банк по клику на логотип */
+.brand-logo-link {
+  display: inline-block;
+  text-decoration: none;
+  line-height: 0;
+}
+
+.brand-logo-link:hover {
+  opacity: 0.9;
+}
+
+/* Логотип — картинка (PNG/SVG) */
+.brand-logo-img {
+  height: 44px;
+  width: auto;
+  max-width: 220px;
+  object-fit: contain;
+  flex-shrink: 0;
+  display: block;
+}
+
+.brand-logo-img--auth {
+  height: 56px;
+  max-width: 280px;
+  margin: 0 auto 20px;
+}
+
+.header__brand-caption {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.screen__title--hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+
+.header__back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  color: var(--tb-white);
+  text-decoration: none;
+  font-size: 24px;
+  line-height: 1;
+  transition: background 0.15s;
+}
+
+.header__back:hover {
+  background: var(--tb-yellow-soft);
+  color: var(--tb-yellow);
+}
+
+.header__title {
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--tb-white);
+  font-family: var(--font);
+}
+
+.header__sub {
+  font-size: 13px;
+  color: var(--tb-gray-text);
+  margin-left: 4px;
+  font-family: var(--font);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Блок «Мой профиль» с выпадающим списком — сдвиг вправо */
+.nav__profile-wrap {
+  margin-left: auto;
+  position: relative;
+}
+
+.nav__profile-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav__icon-person {
+  flex-shrink: 0;
+  fill: #006EFF;
+  vertical-align: middle;
+}
+
+.nav__profile-trigger:hover .nav__icon-person,
+.nav__profile-trigger.active .nav__icon-person {
+  fill: var(--tb-text-dark);
+}
+
+/* Выпадающий список: Личные данные, Документы */
+.nav__dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 180px;
+  padding: 6px 0;
+  background: var(--tb-gray-card);
+  border: 1px solid var(--tb-gray-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  z-index: 20;
+}
+
+.nav__dropdown[hidden] {
+  display: none;
+}
+
+.nav__dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  text-align: left;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--tb-white);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: background 0.15s;
+}
+
+.nav__dropdown-item:hover {
+  background: var(--tb-gray-border);
+}
+
+/* Кнопки нав: одинаковая высота и стиль (в т.ч. «Выйти» = «Мой профиль») */
+.nav__link {
+  padding: 10px 16px;
+  min-width: 150px;
+  min-height: 40px;
+  box-sizing: border-box;
+  justify-content: center;
+  border-radius: var(--radius-btn);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.25;
+  color: var(--tb-text-dark);
+  background: var(--tb-gray-nav);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: background 0.15s, color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Кнопка «Выйти» в навбаре — та же высота, что и «Мой профиль» (переопределяем .btn) */
+.nav .btn.nav__link {
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  min-height: 40px;
+}
+
+.nav__link:hover {
+  background: rgba(255, 221, 45, 0.25);
+  color: var(--tb-text-dark);
+}
+
+.nav__link.active {
+  background: var(--tb-yellow);
+  color: var(--tb-text-dark);
+  font-weight: 600;
+}
+
+a.nav__link {
+  color: var(--tb-text-dark);
+}
+
+a.nav__link:hover {
+  color: var(--tb-text-dark);
+}
+
+/* Main */
+.main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
+}
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+.screen__title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: var(--tb-white);
+}
+
+.screen__subtitle {
+  font-size: 15px;
+  color: var(--tb-gray-text);
+  margin: 0 0 24px;
+}
+
+/* Cards */
+.card {
+  background: var(--tb-gray-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  margin-bottom: 20px;
+  border: 1px solid var(--tb-gray-border);
+}
+
+.card__title {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0 0 16px;
+  color: var(--tb-white);
+}
+
+/* Form */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--tb-white);
+  margin-bottom: 6px;
+}
+
+.label.required::after {
+  content: ' *';
+  color: var(--tb-error);
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: var(--font);
+  color: var(--tb-white);
+  background: var(--tb-black-soft);
+  border: 1px solid var(--tb-gray-border);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--tb-yellow);
+  box-shadow: 0 0 0 3px var(--tb-yellow-soft);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--tb-gray-muted);
+}
+
+.textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23A3A3A3' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Кнопки в стиле Т-Банка: жёлтая «Найти» — сильно скруглённая, жирный шрифт */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 26px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font);
+  border: none;
+  border-radius: var(--radius-btn);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.05s;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn--primary {
+  background: var(--tb-yellow);
+  color: var(--tb-text-dark);
+  font-weight: 700;
+}
+
+.btn--primary:hover {
+  background: var(--tb-yellow-hover);
+  color: var(--tb-text-dark);
+}
+
+.btn--secondary {
+  background: var(--tb-text-dark);
+  color: var(--tb-white);
+  font-weight: 600;
+}
+
+.btn--secondary:hover {
+  background: #2d3540;
+  color: var(--tb-white);
+}
+
+.btn--outline {
+  background: var(--tb-gray-nav);
+  color: var(--tb-text-dark);
+  border: none;
+  font-weight: 500;
+}
+
+.btn--outline:hover {
+  background: rgba(255, 221, 45, 0.25);
+  color: var(--tb-text-dark);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Country selector */
+.country-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 500px) {
+  .country-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.country-card {
+  background: var(--tb-gray-card);
+  border: 2px solid var(--tb-gray-border);
+  border-radius: var(--radius);
+  padding: 20px;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  text-align: center;
+}
+
+.country-card:hover {
+  border-color: var(--tb-yellow);
+  box-shadow: var(--shadow);
+}
+
+.country-card.selected {
+  border-color: var(--tb-yellow);
+  background: var(--tb-yellow-soft);
+  box-shadow: 0 0 0 2px var(--tb-yellow);
+}
+
+.country-card__img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: 12px;
+  background: var(--tb-black-soft);
+}
+
+.country-card__img-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(13, 13, 13, 0.75) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.country-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.92) contrast(1.08) saturate(0.88);
+  transition: filter 0.25s;
+}
+
+.country-card:hover .country-card__img,
+.country-card.selected .country-card__img {
+  filter: brightness(1) contrast(1.05) saturate(0.95);
+}
+
+.country-card.selected .country-card__img-wrap::after {
+  background: linear-gradient(to top, rgba(13, 13, 13, 0.5) 0%, rgba(255, 221, 45, 0.08) 100%);
+}
+
+.country-card__name {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--tb-white);
+}
+
+.visa-type-select {
+  margin-top: 24px;
+}
+
+/* Documents */
+.upload-zone {
+  border: 2px dashed var(--tb-gray-border);
+  border-radius: var(--radius);
+  padding: 32px;
+  text-align: center;
+  background: var(--tb-black-soft);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.upload-zone:hover,
+.upload-zone.dragover {
+  border-color: var(--tb-yellow);
+  background: var(--tb-yellow-soft);
+}
+
+.upload-zone__icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+  color: var(--tb-gray-text);
+}
+
+.upload-zone__text {
+  font-size: 15px;
+  color: var(--tb-white);
+  margin-bottom: 4px;
+}
+
+.upload-zone__hint {
+  font-size: 13px;
+  color: var(--tb-gray-text);
+}
+
+.doc-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0;
+}
+
+.doc-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--tb-black-soft);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  font-size: 14px;
+  border: 1px solid var(--tb-gray-border);
+}
+
+.doc-item__name {
+  font-weight: 500;
+  color: var(--tb-white);
+}
+
+.doc-item__type {
+  color: var(--tb-gray-text);
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.doc-item__status {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--tb-success);
+  color: var(--tb-white);
+  font-weight: 500;
+}
+
+.doc-item__status.pending {
+  background: var(--tb-warning);
+  color: var(--tb-black);
+}
+
+.doc-item__status.failed {
+  background: var(--tb-error);
+  color: var(--tb-white);
+}
+
+.doc-item__delete {
+  background: none;
+  border: none;
+  color: var(--tb-gray-text);
+  cursor: pointer;
+  padding: 8px;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.doc-item__delete:hover {
+  color: var(--tb-error);
+}
+
+/* Filled form / validation */
+.filled-form {
+  margin-top: 24px;
+}
+
+.filled-field {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--tb-gray-border);
+}
+
+.filled-field:last-child {
+  border-bottom: none;
+}
+
+.filled-field__label {
+  font-size: 13px;
+  color: var(--tb-gray-text);
+  margin-bottom: 4px;
+}
+
+.filled-field__value {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--tb-white);
+}
+
+.validation-block {
+  margin-top: 24px;
+  padding: 20px;
+  border-radius: var(--radius);
+  background: var(--tb-black-soft);
+  border: 1px solid var(--tb-gray-border);
+}
+
+.validation-block.valid {
+  background: rgba(54, 180, 114, 0.15);
+  border: 1px solid var(--tb-success);
+}
+
+.validation-block.invalid {
+  background: rgba(234, 84, 74, 0.15);
+  border: 1px solid var(--tb-error);
+}
+
+.validation-block__title {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.validation-block.valid .validation-block__title {
+  color: var(--tb-success);
+}
+
+.validation-block.invalid .validation-block__title {
+  color: var(--tb-error);
+}
+
+.checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.checklist__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 14px;
+  color: var(--tb-white);
+}
+
+.checklist__item::before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  margin-top: 0;
+}
+
+.checklist__item.passed::before {
+  background: var(--tb-success);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
+  background-size: 14px;
+  background-position: center;
+}
+
+.checklist__item.failed::before {
+  background: var(--tb-error);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/%3E%3C/svg%3E");
+  background-size: 12px;
+  background-position: center;
+}
+
+.checklist__detail {
+  font-size: 13px;
+  color: var(--tb-gray-text);
+  margin-top: 2px;
+}
+
+.errors-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+}
+
+.errors-list__item {
+  font-size: 14px;
+  color: var(--tb-error);
+  padding: 6px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* Actions bar */
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+/* Helper */
+.hint {
+  font-size: 13px;
+  color: var(--tb-gray-text);
+  margin-top: 4px;
+}
+
+.input--error {
+  border-color: var(--tb-error);
+}
+
+.label--error {
+  color: var(--tb-error);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--tb-gray-text);
+}
+
+.loading__spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--tb-gray-border);
+  border-top-color: var(--tb-yellow);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 24px;
+  font-size: 13px;
+  color: var(--tb-gray-muted);
+}
+
+.footer__support {
+  margin-bottom: 8px;
+}
+
+.footer__phone {
+  color: var(--tb-yellow);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer__phone:hover {
+  text-decoration: underline;
+}
+
+.footer__copy {
+  color: var(--tb-gray-muted);
+}
+
+/* Auth screen */
+.auth-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--tb-black);
+  overflow-y: auto;
+}
+
+.auth-card {
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+
+.auth-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 20px;
+  border-radius: var(--radius-btn);
+  overflow: hidden;
+  border: 1px solid var(--tb-gray-border);
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  background: var(--tb-black-soft);
+  color: var(--tb-gray-text);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.auth-tab:hover {
+  color: var(--tb-white);
+  background: var(--tb-gray-card);
+}
+
+.auth-tab.active {
+  background: var(--tb-yellow);
+  color: var(--tb-text-dark);
+  font-weight: 600;
+}
+
+.auth-form {
+  margin-bottom: 16px;
+}
+
+.auth-form .form-group {
+  margin-bottom: 16px;
+}
+
+.auth-message {
+  font-size: 14px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.auth-screen .hint {
+  margin: 16px 0;
+}
+
+.auth-screen .btn--outline {
+  margin-top: 8px;
+}
+
+/* Export page */
+.export-main {
+  max-width: 720px;
+}
+
+.export-section {
+  margin-bottom: 24px;
+}
+
+.export-chat .chat-messages--page {
+  min-height: 320px;
+  max-height: 50vh;
+}
+
+.motivation-form .textarea {
+  min-height: 100px;
+}
+
+.uk-form .form-row {
+  margin-bottom: 12px;
+}
+
+.uk-repeat-block {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: var(--tb-black-soft);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--tb-gray-border);
+}
+
+/* Кнопка помощника: справа снизу, скруглённый прямоугольник как «Мой профиль» */
+.chat-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  left: auto;
+  padding: 10px 16px;
+  min-height: 40px;
+  border-radius: var(--radius-btn);
+  background: var(--tb-gray-nav);
+  color: var(--tb-text-dark);
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  font-family: var(--font);
+  box-shadow: var(--shadow-lg);
+  z-index: 50;
+  transition: background 0.15s, transform 0.05s, box-shadow 0.15s;
+}
+
+.chat-fab:hover {
+  background: rgba(255, 221, 45, 0.25);
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.4);
+}
+
+.chat-fab__icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.chat-fab__label {
+  white-space: nowrap;
+}
+
+/* Chat overlay */
+.chat-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 56, 68, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 24px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+}
+
+.chat-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.chat-overlay.is-open .chat-panel {
+  transform: scale(1);
+}
+
+.chat-panel {
+  width: 100%;
+  max-width: 520px;
+  max-height: 80vh;
+  background: var(--tb-gray-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--tb-gray-border);
+  display: flex;
+  flex-direction: column;
+  transform: scale(0.96);
+  transition: transform 0.2s;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--tb-gray-border);
+  flex-shrink: 0;
+}
+
+.chat-header__title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--tb-white);
+}
+
+.chat-header__close {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: var(--tb-black-soft);
+  border-radius: var(--radius-sm);
+  font-size: 22px;
+  line-height: 1;
+  color: var(--tb-white);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s;
+}
+
+.chat-header__close:hover {
+  background: var(--tb-yellow-soft);
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chat-msg {
+  max-width: 85%;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.chat-msg--user {
+  align-self: flex-end;
+  background: var(--tb-yellow);
+  color: var(--tb-black);
+}
+
+.chat-msg--assistant {
+  align-self: flex-start;
+  background: var(--tb-black-soft);
+  color: var(--tb-white);
+  border: 1px solid var(--tb-gray-border);
+}
+
+.chat-msg__role {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--tb-gray-text);
+}
+
+.chat-msg--user .chat-msg__role {
+  color: var(--tb-black);
+}
+
+.chat-input::placeholder {
+  color: var(--tb-gray-muted);
+}
+
+.chat-form {
+  display: flex;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--tb-gray-border);
+  flex-shrink: 0;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: var(--font);
+  border: 1px solid var(--tb-gray-border);
+  border-radius: var(--radius-sm);
+  color: var(--tb-white);
+  background: var(--tb-black-soft);
+}
+
+.chat-input:focus {
+  outline: none;
+  border-color: var(--tb-yellow);
+  box-shadow: 0 0 0 2px var(--tb-yellow-soft);
+}
+
+.chat-send {
+  flex-shrink: 0;
+}
+
+.chat-msg--typing::after {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--tb-gray-text);
+  border-radius: 50%;
+  animation: chat-blink 1s ease-in-out infinite;
+  margin-left: 4px;
+}
+
+@keyframes chat-blink {
+  50% { opacity: 0.3; }
+}

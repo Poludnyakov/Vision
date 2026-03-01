@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Экспорт заявки — Визовый помощник Т-Путешествия</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header__brand">
+      <a href="index.html" class="header__back" aria-label="К выбору страны">←</a>
+      <a href="https://www.tbank.ru" target="_blank" rel="noopener noreferrer" class="brand-logo-link"><img src="images/logo-tbank.png" alt="Т-Путешествия" class="brand-logo-img"></a>
+      <div class="header__brand-caption">
+        <span class="header__title">Экспорт для подачи</span>
+        <span class="header__sub" id="export-subtitle">Визовый помощник</span>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="index.html" class="nav__link">Новая заявка</a>
+      <div class="nav__profile-wrap">
+        <button type="button" class="nav__link nav__profile-trigger" id="nav-profile-trigger" aria-expanded="false" aria-haspopup="true">
+          <svg class="nav__icon-person" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="7" r="3.5" fill="currentColor"/><path d="M5 21c0-4 3.5-7 7-7s7 3 7 7" fill="currentColor"/></svg>
+          <span>Мой профиль</span>
+        </button>
+        <div class="nav__dropdown" id="nav-profile-dropdown" hidden>
+          <a href="index.html#profile" class="nav__dropdown-item">Личные данные</a>
+          <a href="index.html#documents" class="nav__dropdown-item">Документы</a>
+        </div>
+      </div>
+      <button type="button" class="btn btn--outline nav__link" id="export-btn-logout">Выйти</button>
+    </nav>
+  </header>
+
+  <main class="main export-main">
+    <!-- Только для США: мотивационное письмо -->
+    <section class="card export-section" id="section-motivation" data-country="usa">
+      <h2 class="screen__title">Мотивационное письмо для визы в США</h2>
+      <p class="screen__subtitle">Заполните поля — письмо можно приложить к заявке или использовать на собеседовании. Сохраняется в вашем аккаунте.</p>
+      <form id="motivation-form" class="motivation-form">
+        <div class="form-group">
+          <label class="label">Цель поездки</label>
+          <input type="text" class="input" name="purpose" placeholder="Например: туризм, посещение родственников, деловая поездка" maxlength="500">
+        </div>
+        <div class="form-group">
+          <label class="label">Связи с родиной (почему вернётесь)</label>
+          <textarea class="textarea" name="ties_to_home" placeholder="Работа, семья, имущество, учёба…" rows="4" maxlength="2000"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="label">План поездки (маршрут, даты)</label>
+          <textarea class="textarea" name="trip_plan" placeholder="Города, даты прилёта и вылета, основные пункты" rows="3" maxlength="1500"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="label">Текст мотивационного письма (итог)</label>
+          <textarea class="textarea" name="letter_text" placeholder="Соберите в один текст: цель, связи, план. На английском для консульства." rows="8" maxlength="5000"></textarea>
+        </div>
+        <div class="actions">
+          <button type="submit" class="btn btn--primary" id="motivation-save">Сохранить письмо</button>
+        </div>
+      </form>
+      <p id="motivation-status" class="hint" style="display: none; margin-top: 12px;"></p>
+    </section>
+
+    <!-- Только для Великобритании: онлайн-анкета -->
+    <section class="card export-section" id="section-uk" data-country="uk">
+      <h2 class="screen__title">Онлайн-анкета для визы в Великобританию</h2>
+      <p class="screen__subtitle">Форма заполняется полностью онлайн. Данные привязаны к вашему аккаунту.</p>
+      <form id="uk-form" class="uk-form">
+        <div class="card__title">1. Персональные данные (из профиля)</div>
+        <p class="hint">Заполняются из «Мой профиль» на главной странице.</p>
+
+        <div class="card__title" style="margin-top: 20px;">2. Паспорт</div>
+        <div class="form-group"><label class="label required">Номер паспорта</label><input type="text" class="input" name="passport_number"></div>
+        <div class="form-row">
+          <div class="form-group"><label class="label required">Дата выдачи</label><input type="date" class="input" name="passport_issued_at"></div>
+          <div class="form-group"><label class="label required">Срок действия</label><input type="date" class="input" name="passport_expires_at"></div>
+        </div>
+
+        <div class="card__title" style="margin-top: 20px;">3. Контактные данные</div>
+        <div class="form-row">
+          <div class="form-group"><label class="label required">Email</label><input type="email" class="input" name="contact_email"></div>
+          <div class="form-group"><label class="label required">Телефон</label><input type="tel" class="input" name="contact_phone"></div>
+        </div>
+
+        <div class="card__title" style="margin-top: 20px;">4. Семейное положение</div>
+        <div class="form-group">
+          <label class="label required">Статус</label>
+          <select class="select" name="marital_status">
+            <option value="">—</option>
+            <option value="single">Холост / не замужем</option>
+            <option value="married">Женат / замужем</option>
+            <option value="divorced">В разводе</option>
+            <option value="widowed">Вдовец / вдова</option>
+            <option value="civil_partnership">Гражданское партнёрство</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="label">Имя супруга/партнёра (если применимо)</label><input type="text" class="input" name="spouse_name"></div>
+
+        <div class="card__title" style="margin-top: 20px;">5. История работы (до 10 лет)</div>
+        <div id="uk-work-list"></div>
+        <button type="button" class="btn btn--outline" id="uk-add-work">+ Добавить место работы</button>
+
+        <div class="card__title" style="margin-top: 20px;">6. История поездок</div>
+        <div id="uk-travel-list"></div>
+        <button type="button" class="btn btn--outline" id="uk-add-travel">+ Добавить поездку</button>
+
+        <div class="card__title" style="margin-top: 20px;">7. Доходы и расходы</div>
+        <div class="form-row">
+          <div class="form-group"><label class="label">Ежемесячный доход</label><input type="number" class="input" name="income_monthly" min="0" step="1000"></div>
+          <div class="form-group"><label class="label">Валюта</label><select class="select" name="income_currency"><option value="RUB">RUB</option><option value="USD">USD</option><option value="GBP">GBP</option></select></div>
+        </div>
+        <div class="form-group"><label class="label">Ежемесячные расходы</label><input type="number" class="input" name="expenses_monthly" min="0" step="1000"></div>
+
+        <div class="card__title" style="margin-top: 20px;">8. Источники средств</div>
+        <textarea class="textarea" name="sources_of_funds" rows="4" placeholder="Зарплата, сбережения, спонсор…"></textarea>
+
+        <div class="card__title" style="margin-top: 20px;">9. Предыдущие визы и отказы</div>
+        <div class="form-group"><label class="label">Были ли визы в UK или другие страны?</label><select class="select" name="had_visas"><option value="">—</option><option value="yes">Да</option><option value="no">Нет</option></select></div>
+        <div class="form-group"><label class="label">Были ли отказы в визе?</label><select class="select" name="had_refusals"><option value="">—</option><option value="yes">Да</option><option value="no">Нет</option></select></div>
+        <div class="form-group"><label class="label">Подробности (если да)</label><textarea class="textarea" name="visas_refusals_detail" rows="3"></textarea></div>
+
+        <div class="card__title" style="margin-top: 20px;">10. Судимости</div>
+        <div class="form-group"><label class="label required">Есть ли судимости?</label><select class="select" name="criminal_record"><option value="no">Нет</option><option value="yes">Да</option></select></div>
+        <div class="form-group" id="uk-criminal-detail-wrap" style="display: none;"><label class="label">Подробности</label><textarea class="textarea" name="criminal_record_detail" rows="4"></textarea></div>
+
+        <div class="card__title" style="margin-top: 20px;">11. Дополнительные сведения</div>
+        <textarea class="textarea" name="additional_info" rows="4" placeholder="Всё, что важно для рассмотрения заявки"></textarea>
+
+        <div class="actions" style="margin-top: 24px;">
+          <button type="submit" class="btn btn--primary" id="uk-form-save">Сохранить анкету</button>
+        </div>
+      </form>
+      <p id="uk-form-status" class="hint" style="display: none; margin-top: 12px;"></p>
+    </section>
+
+    <!-- Для Шенген/Япония: только подсказка -->
+    <section class="card export-section" id="section-other" data-country="other">
+      <h2 class="screen__title">Подготовка к подаче</h2>
+      <p class="screen__subtitle">Для выбранной страны отдельная анкета не предусмотрена. Используйте данные из «Мой профиль» и чат ниже для вопросов.</p>
+    </section>
+
+    <!-- Чат с помощником -->
+    <section class="card export-section export-chat">
+      <h2 class="screen__title">Помощник по подаче визы</h2>
+      <p class="screen__subtitle">Задайте вопрос или введите команду, например /help</p>
+      <div class="chat-messages chat-messages--page" id="chat-messages"></div>
+      <form class="chat-form" id="chat-form">
+        <input type="text" class="chat-input" id="chat-input" placeholder="Вопрос или команда, например /help" autocomplete="off">
+        <button type="submit" class="btn btn--primary chat-send" id="chat-send">Отправить</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__support">Поддержка: <a href="tel:+79262802222" class="footer__phone">+7 926 280 2222</a></div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="export.js"></script>
+</body>
+</html>

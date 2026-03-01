@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Визовый помощник — Т-Путешествия</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Экран входа: войти или создать аккаунт (пароль, без подтверждения почты) -->
+  <section id="auth-screen" class="auth-screen">
+    <div class="auth-card card">
+      <a href="https://www.tbank.ru" target="_blank" rel="noopener noreferrer" class="brand-logo-link"><img src="images/logo-tbank.png" alt="Т-Путешествия" class="brand-logo-img brand-logo-img--auth"></a>
+      <h1 class="screen__title screen__title--hidden">Т-Путешествия</h1>
+      <p class="screen__subtitle">Визовый помощник. Войдите в аккаунт или создайте новый — данные синхронизируются с вашей учётной записью.</p>
+
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" data-mode="login">Войти в аккаунт</button>
+        <button type="button" class="auth-tab" data-mode="register">Создать аккаунт</button>
+      </div>
+
+      <form id="auth-form" class="auth-form" autocomplete="off">
+        <div class="form-group">
+          <label class="label" for="auth-email">Email</label>
+          <input type="email" id="auth-email" class="input" placeholder="your@email.com" required autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label class="label" for="auth-password">Пароль</label>
+          <input type="password" id="auth-password" class="input" placeholder="••••••••" required minlength="6" autocomplete="off">
+          <p class="hint auth-hint-password">Минимум 6 символов.</p>
+        </div>
+        <div class="form-group auth-confirm-wrap" id="auth-confirm-wrap" style="display: none;">
+          <label class="label" for="auth-password-confirm">Подтвердить пароль</label>
+          <input type="password" id="auth-password-confirm" class="input" placeholder="Повторите пароль" minlength="6" autocomplete="off">
+        </div>
+        <button type="submit" class="btn btn--primary btn--block" id="auth-submit">Войти</button>
+      </form>
+      <p id="auth-message" class="auth-message" style="display: none;"></p>
+    </div>
+  </section>
+
+  <div id="app-content" style="display: none;">
+  <header class="header">
+    <div class="header__brand">
+      <a href="https://www.tbank.ru" target="_blank" rel="noopener noreferrer" class="brand-logo-link"><img src="images/logo-tbank.png" alt="Т-Путешествия" class="brand-logo-img"></a>
+      <span class="header__sub">Визовый помощник</span>
+    </div>
+    <nav class="nav">
+      <button type="button" class="nav__link" data-screen="start">Новая заявка</button>
+      <div class="nav__profile-wrap">
+        <button type="button" class="nav__link nav__profile-trigger" id="nav-profile-trigger" aria-expanded="false" aria-haspopup="true">
+          <svg class="nav__icon-person" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="7" r="3.5" fill="currentColor"/><path d="M5 21c0-4 3.5-7 7-7s7 3 7 7" fill="currentColor"/></svg>
+          <span>Мой профиль</span>
+        </button>
+        <div class="nav__dropdown" id="nav-profile-dropdown" hidden>
+          <button type="button" class="nav__dropdown-item" data-screen="profile">Личные данные</button>
+          <button type="button" class="nav__dropdown-item" data-screen="documents">Документы</button>
+        </div>
+      </div>
+      <button type="button" class="btn btn--outline nav__link" id="btn-logout">Выйти</button>
+    </nav>
+  </header>
+
+  <main class="main">
+    <!-- Экран: выбор страны и заполнение заявки -->
+    <section id="screen-start" class="screen active">
+      <h1 class="screen__title">Новая заявка на визу</h1>
+      <p class="screen__subtitle">Выберите страну и тип визы — мы заполним форму по вашему профилю</p>
+
+      <div class="card">
+        <div class="card__title">Страна назначения</div>
+        <div class="country-grid" id="country-grid">
+          <div class="country-card" data-country="schengen">
+            <div class="country-card__img-wrap">
+              <img src="images/schengen.png" alt="" class="country-card__img">
+            </div>
+            <div class="country-card__name">Шенген</div>
+          </div>
+          <div class="country-card" data-country="usa">
+            <div class="country-card__img-wrap">
+              <img src="images/usa.png" alt="" class="country-card__img">
+            </div>
+            <div class="country-card__name">США</div>
+          </div>
+          <div class="country-card" data-country="uk">
+            <div class="country-card__img-wrap">
+              <img src="images/uk.png" alt="" class="country-card__img">
+            </div>
+            <div class="country-card__name">Великобритания</div>
+          </div>
+          <div class="country-card" data-country="japan">
+            <div class="country-card__img-wrap">
+              <img src="images/japan.png" alt="" class="country-card__img">
+            </div>
+            <div class="country-card__name">Япония</div>
+          </div>
+        </div>
+
+        <div class="visa-type-select form-group">
+          <label class="label">Тип визы</label>
+          <select class="select" id="visa-type">
+            <option value="tourist">Туристическая</option>
+            <option value="business">Деловая</option>
+            <option value="transit">Транзитная</option>
+          </select>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn btn--primary" id="btn-fill">
+            Заполнить заявку
+          </button>
+        </div>
+      </div>
+
+      <div id="fill-result" class="card" style="display: none;">
+        <div class="card__title">Заполненная заявка</div>
+        <div id="filled-form" class="filled-form"></div>
+        <div id="validation-block" class="validation-block"></div>
+        <div class="actions" style="margin-top: 20px;">
+          <button type="button" class="btn btn--outline" id="btn-edit-fields">Редактировать поля</button>
+          <button type="button" class="btn btn--primary" id="btn-export">Экспорт для подачи</button>
+        </div>
+      </div>
+
+      <div id="fill-loading" class="card loading" style="display: none;">
+        <div class="loading__spinner"></div>
+        <div>Заполняем форму по вашему профилю и документам…</div>
+      </div>
+    </section>
+
+    <!-- Экран: мой визовый профиль -->
+    <section id="screen-profile" class="screen">
+      <h1 class="screen__title">Мой профиль</h1>
+      <p class="screen__subtitle">Почта, личные данные и страна для путешествий. Все поля обязательны для сохранения.</p>
+      <p id="profile-validation-error" class="hint" style="display: none; color: var(--tb-error); margin-bottom: 16px;"></p>
+
+      <form id="form-profile" class="card">
+        <div class="card__title">Почта и страна</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="label required">Email</label>
+            <input type="email" class="input" name="contact.email" placeholder="email@example.com" required>
+          </div>
+          <div class="form-group">
+            <label class="label required">Страна для путешествий</label>
+            <select class="select" name="preferred_country" required>
+              <option value="">— Выберите —</option>
+              <option value="schengen">Шенген</option>
+              <option value="usa">США</option>
+              <option value="uk">Великобритания</option>
+              <option value="japan">Япония</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card__title" style="margin-top: 24px;">Персональные данные</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="label required">Фамилия</label>
+            <input type="text" class="input" name="personal.last_name" placeholder="Как в паспорте" maxlength="100">
+          </div>
+          <div class="form-group">
+            <label class="label required">Имя</label>
+            <input type="text" class="input" name="personal.first_name" placeholder="Как в паспорте" maxlength="100">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="label">Отчество</label>
+          <input type="text" class="input" name="personal.middle_name" placeholder="При наличии" maxlength="100">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="label required">Дата рождения</label>
+            <input type="date" class="input" name="personal.birth_date">
+          </div>
+          <div class="form-group">
+            <label class="label required">Место рождения</label>
+            <input type="text" class="input" name="personal.birth_place" placeholder="Город, страна">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="label required">Гражданство</label>
+            <select class="select" name="personal.citizenship">
+              <option value="RU">Россия</option>
+              <option value="KZ">Казахстан</option>
+              <option value="BY">Беларусь</option>
+              <option value="OTHER">Другое</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="label">Семейное положение</label>
+            <select class="select" name="personal.marital_status">
+              <option value="">—</option>
+              <option value="single">Холост / не замужем</option>
+              <option value="married">Женат / замужем</option>
+              <option value="divorced">В разводе</option>
+              <option value="widowed">Вдовец / вдова</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card__title" style="margin-top: 24px;">Паспорт</div>
+        <div class="form-group">
+          <label class="label required">Номер паспорта</label>
+          <input type="text" class="input" name="passport.number" placeholder="Серия и номер" maxlength="20">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="label required">Кем выдан</label>
+            <input type="text" class="input" name="passport.issued_by" placeholder="Название органа">
+          </div>
+          <div class="form-group">
+            <label class="label required">Дата выдачи</label>
+            <input type="date" class="input" name="passport.issued_at">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="label required">Срок действия</label>
+          <input type="date" class="input" name="passport.expires_at">
+        </div>
+
+        <div class="card__title" style="margin-top: 24px;">Контакты и адрес</div>
+        <div class="form-group">
+          <label class="label required">Телефон</label>
+          <input type="tel" class="input" name="contact.phone" placeholder="+7 999 123-45-67">
+        </div>
+        <div class="form-group">
+          <label class="label required">Страна проживания</label>
+          <select class="select" name="address.country">
+            <option value="RU">Россия</option>
+            <option value="KZ">Казахстан</option>
+            <option value="OTHER">Другое</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="label">Город</label>
+            <input type="text" class="input" name="address.city" placeholder="Город">
+          </div>
+          <div class="form-group">
+            <label class="label">Индекс</label>
+            <input type="text" class="input" name="address.postal_code" placeholder="Почтовый индекс">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="label required">Улица, дом, квартира</label>
+          <input type="text" class="input" name="address.line" placeholder="Адрес">
+        </div>
+
+        <div class="card__title" style="margin-top: 24px;">Занятость</div>
+        <div class="form-group">
+          <label class="label required">Статус</label>
+          <select class="select" name="employment.status">
+            <option value="employed">Работаю по найму</option>
+            <option value="self_employed">Самозанятый / ИП</option>
+            <option value="student">Студент</option>
+            <option value="unemployed">Безработный</option>
+            <option value="retired">Пенсионер</option>
+            <option value="other">Другое</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="label">Работодатель</label>
+          <input type="text" class="input" name="employment.employer_name" placeholder="Название организации">
+        </div>
+        <div class="form-group">
+          <label class="label">Должность</label>
+          <input type="text" class="input" name="employment.position" placeholder="Должность">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="label">Доход (в месяц)</label>
+            <input type="number" class="input" name="employment.income_amount" placeholder="Сумма" min="0" step="1000">
+          </div>
+          <div class="form-group">
+            <label class="label">Валюта</label>
+            <select class="select" name="employment.income_currency">
+              <option value="RUB">RUB</option>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions" style="margin-top: 24px;">
+          <button type="submit" class="btn btn--primary">Сохранить профиль</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Экран: документы -->
+    <section id="screen-documents" class="screen">
+      <h1 class="screen__title">Документы</h1>
+      <p class="screen__subtitle">Загрузите паспорт, фото и справки — данные подставятся в заявку автоматически</p>
+
+      <div class="card">
+        <div class="card__title">Загрузить документ</div>
+        <div class="upload-zone" id="upload-zone">
+          <div class="upload-zone__icon">📄</div>
+          <div class="upload-zone__text">Перетащите файл сюда или нажмите для выбора</div>
+          <div class="upload-zone__hint">PDF, JPG или PNG, до 10 МБ</div>
+        </div>
+        <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
+
+        <div class="form-group" style="margin-top: 16px;">
+          <label class="label">Тип документа</label>
+          <select class="select" id="doc-type">
+            <option value="passport_scan">Скан паспорта</option>
+            <option value="photo">Фото на визу</option>
+            <option value="employment_letter">Справка с работы</option>
+            <option value="bank_statement">Выписка из банка</option>
+            <option value="other">Другое</option>
+          </select>
+        </div>
+
+        <ul class="doc-list" id="doc-list"></ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- Кнопка помощника: справа снизу, скруглённый прямоугольник (как кнопки навбара) -->
+  <button type="button" class="chat-fab" id="chat-fab" aria-label="Открыть помощника" title="Помощник">
+    <svg class="chat-fab__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/></svg>
+    <span class="chat-fab__label">Помощник</span>
+  </button>
+
+  <!-- Окно помощника (открывается по клику на кнопку) -->
+  <div class="chat-overlay" id="chat-overlay">
+    <div class="chat-panel">
+      <div class="chat-header">
+        <h2 class="chat-header__title">Помощник по визе</h2>
+        <button type="button" class="chat-header__close" id="chat-close" aria-label="Закрыть">×</button>
+      </div>
+      <div class="chat-messages" id="start-chat-messages"></div>
+      <form class="chat-form" id="start-chat-form">
+        <input type="text" class="chat-input" id="start-chat-input" placeholder="Вопрос или команда, например /help" autocomplete="off">
+        <button type="submit" class="btn btn--primary chat-send">Отправить</button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer__support">Поддержка: <a href="tel:+79262802222" class="footer__phone">+7 926 280 2222</a></div>
+    <div class="footer__copy">Прототип визового помощника Т-Путешествия</div>
+  </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
