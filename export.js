@@ -131,17 +131,22 @@
     return { profile: profile || {}, ukForm: ukForm };
   }
 
-  document.getElementById('export-download-filled').addEventListener('click', function (e) {
+  var downloadBtn = document.getElementById('export-download-filled');
+  if (downloadBtn) {
+    downloadBtn.addEventListener('click', function (e) {
     e.preventDefault();
+    if (typeof window.jspdf === 'undefined') {
+      alert('Загрузка библиотеки PDF не завершена. Обновите страницу и попробуйте снова.');
+      return;
+    }
     var data = getExportDataForPdf();
     var profile = data.profile;
-    if (typeof window.jspdf === 'undefined') return;
     var jsPDF = window.jspdf.jsPDF;
     var doc = new jsPDF();
     doc.setFontSize(18);
-    doc.text('Визовая заявка', 14, 20);
+    doc.text('Visa Application', 14, 20);
     doc.setFontSize(11);
-    doc.text((COUNTRY_NAMES[country] || country) + ', ' + (VISA_TYPE_NAMES[visaType] || visaType), 14, 28);
+    doc.text((COUNTRY_NAMES[country] || country) + ', ' + (VISA_NAMES[visaType] || visaType), 14, 28);
     doc.setFontSize(10);
     var y = 36;
     var line = function (label, value) {
@@ -152,12 +157,12 @@
       y += 6;
     };
     if (country === 'uk' && data.ukForm) {
-      var ukLabels = { passport_number: 'Номер паспорта', passport_issued_at: 'Дата выдачи', passport_expires_at: 'Срок действия', contact_email: 'Email', contact_phone: 'Телефон', marital_status: 'Семейное положение', spouse_name: 'Имя супруга/партнёра', income_monthly: 'Ежемесячный доход (RUB)', expenses_monthly: 'Ежемесячные расходы', sources_of_funds: 'Источники средств', had_visas: 'Визы в UK/другие страны', had_refusals: 'Отказы в визе', visas_refusals_detail: 'Подробности виз/отказов', criminal_record: 'Судимости', criminal_record_detail: 'Подробности судимостей', additional_info: 'Дополнительные сведения', work_employer_1: 'Работодатель (1)', work_position_1: 'Должность (1)', work_from_1: 'Дата начала (1)', work_to_1: 'Дата окончания (1)', travel_country_1: 'Страна поездки (1)', travel_purpose_1: 'Цель поездки (1)', travel_from_1: 'Дата въезда (1)', travel_to_1: 'Дата выезда (1)' };
+      var ukLabels = { passport_number: 'Passport number', passport_issued_at: 'Date of issue', passport_expires_at: 'Expiry date', contact_email: 'Email', contact_phone: 'Phone', marital_status: 'Marital status', spouse_name: 'Spouse/partner name', income_monthly: 'Monthly income (RUB)', expenses_monthly: 'Monthly expenses', sources_of_funds: 'Sources of funds', had_visas: 'Visas to UK/other countries', had_refusals: 'Visa refusals', visas_refusals_detail: 'Visa/refusal details', criminal_record: 'Criminal record', criminal_record_detail: 'Criminal record details', additional_info: 'Additional information', work_employer_1: 'Employer (1)', work_position_1: 'Position (1)', work_from_1: 'Start date (1)', work_to_1: 'End date (1)', travel_country_1: 'Travel country (1)', travel_purpose_1: 'Travel purpose (1)', travel_from_1: 'Entry date (1)', travel_to_1: 'Exit date (1)' };
       var p = profile.personal || {};
-      line('Фамилия', p.last_name);
-      line('Имя', p.first_name);
-      line('Дата рождения', p.birth_date);
-      line('Место рождения', p.birth_place);
+      line('Surname', p.last_name);
+      line('First name', p.first_name);
+      line('Date of birth', p.birth_date);
+      line('Place of birth', p.birth_place);
       Object.keys(data.ukForm).forEach(function (k) {
         var v = data.ukForm[k];
         if (v == null || String(v).trim() === '') return;
@@ -165,7 +170,7 @@
       });
     } else {
       var p = profile.personal || {}, pass = profile.passport || {}, contact = profile.contact || {}, addr = profile.address || {}, emp = profile.employment || {};
-      var labels = { surname: 'Фамилия', first_name: 'Имя', birth_date: 'Дата рождения', birth_place: 'Место рождения', passport_number: 'Номер паспорта', passport_issued_at: 'Дата выдачи', passport_expires_at: 'Срок действия', email: 'Email', phone: 'Телефон', address_line: 'Адрес', income: 'Доход' };
+      var labels = { surname: 'Surname', first_name: 'First name', birth_date: 'Date of birth', birth_place: 'Place of birth', passport_number: 'Passport number', passport_issued_at: 'Date of issue', passport_expires_at: 'Expiry date', email: 'Email', phone: 'Phone', address_line: 'Address', income: 'Income' };
       line(labels.surname, p.last_name);
       line(labels.first_name, p.first_name);
       line(labels.birth_date, p.birth_date);
@@ -179,8 +184,14 @@
       line(labels.income, emp.income_amount ? emp.income_amount + ' ' + (emp.income_currency || 'RUB') : '');
     }
     var filename = 'visa-' + country + '-' + (profile.personal && profile.personal.last_name ? String(profile.personal.last_name).replace(/\s+/g, '-') : 'application') + '.pdf';
-    doc.save(filename);
+    try {
+      doc.save(filename);
+    } catch (err) {
+      console.warn('PDF save failed', err);
+      alert('Не удалось сохранить PDF. Проверьте консоль браузера (F12).');
+    }
   });
+  }
 
   function escapeHtml(s) {
     var div = document.createElement('div');

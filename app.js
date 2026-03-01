@@ -1160,11 +1160,11 @@
         var jsPDF = window.jspdf.jsPDF;
         var doc = new jsPDF();
         doc.setFontSize(18);
-        doc.text('Визовая заявка', 14, 20);
+        doc.text('Visa Application', 14, 20);
         doc.setFontSize(11);
         doc.text(countryName + ', ' + visaTypeName, 14, 28);
         doc.setFontSize(10);
-        var labels = { surname: 'Фамилия', first_name: 'Имя', birth_date: 'Дата рождения', birth_place: 'Место рождения', citizenship: 'Гражданство', passport_number: 'Номер паспорта', passport_issued_at: 'Дата выдачи', passport_expires_at: 'Срок действия', email: 'Email', phone: 'Телефон', address_line: 'Адрес', city: 'Город', postal_code: 'Индекс', country_residence: 'Страна проживания', employment_status: 'Занятость', employer_name: 'Работодатель', position: 'Должность', income: 'Доход' };
+        var labels = { surname: 'Surname', first_name: 'First name', birth_date: 'Date of birth', birth_place: 'Place of birth', citizenship: 'Citizenship', passport_number: 'Passport number', passport_issued_at: 'Date of issue', passport_expires_at: 'Expiry date', email: 'Email', phone: 'Phone', address_line: 'Address', city: 'City', postal_code: 'Postal code', country_residence: 'Country of residence', employment_status: 'Employment status', employer_name: 'Employer', position: 'Position', income: 'Income' };
         var y = 38;
         Object.keys(fields).forEach(function (k) {
           var line = (labels[k] || k) + ': ' + String(fields[k]).substring(0, 90);
