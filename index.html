@@ -47,6 +47,7 @@
     </div>
     <nav class="nav">
       <button type="button" class="nav__link" data-screen="start">Новая заявка</button>
+      <button type="button" class="nav__link nav__link--interview" id="nav-link-interview" data-screen="interview" style="display: none;">Собеседование с консулом</button>
       <div class="nav__profile-wrap">
         <button type="button" class="nav__link nav__profile-trigger" id="nav-profile-trigger" aria-expanded="false" aria-haspopup="true">
           <svg class="nav__icon-person" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="7" r="3.5" fill="currentColor"/><path d="M5 21c0-4 3.5-7 7-7s7 3 7 7" fill="currentColor"/></svg>
@@ -98,11 +99,27 @@
 
         <div class="visa-type-select form-group">
           <label class="label">Тип визы</label>
-          <select class="select" id="visa-type">
-            <option value="tourist">Туристическая</option>
-            <option value="business">Деловая</option>
-            <option value="transit">Транзитная</option>
-          </select>
+          <div class="visa-type-custom" id="visa-type-custom">
+            <input type="hidden" id="visa-type" name="visa-type" value="tourist">
+            <button type="button" class="visa-type-trigger" id="visa-type-trigger" aria-expanded="false" aria-haspopup="listbox" aria-label="Тип визы">
+              <span class="visa-type-trigger__label">Туристическая</span>
+              <svg class="visa-type-trigger__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path fill="currentColor" d="M6 8L1 3h10z"/></svg>
+            </button>
+            <div class="visa-type-dropdown" id="visa-type-dropdown" role="listbox" aria-hidden="true">
+              <button type="button" class="visa-type-option visa-type-option--selected" role="option" data-value="tourist" aria-selected="true">
+                <svg class="visa-type-option__check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                Туристическая
+              </button>
+              <button type="button" class="visa-type-option" role="option" data-value="business" aria-selected="false">
+                <svg class="visa-type-option__check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                Деловая
+              </button>
+              <button type="button" class="visa-type-option" role="option" data-value="transit" aria-selected="false">
+                <svg class="visa-type-option__check" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                Транзитная
+              </button>
+            </div>
+          </div>
         </div>
 
         <div class="actions">
@@ -164,10 +181,6 @@
             <input type="text" class="input" name="personal.first_name" placeholder="Как в паспорте" maxlength="100">
           </div>
         </div>
-        <div class="form-group">
-          <label class="label">Отчество</label>
-          <input type="text" class="input" name="personal.middle_name" placeholder="При наличии" maxlength="100">
-        </div>
         <div class="form-row">
           <div class="form-group">
             <label class="label required">Дата рождения</label>
@@ -205,15 +218,9 @@
           <label class="label required">Номер паспорта</label>
           <input type="text" class="input" name="passport.number" placeholder="Серия и номер" maxlength="20">
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="label required">Кем выдан</label>
-            <input type="text" class="input" name="passport.issued_by" placeholder="Название органа">
-          </div>
-          <div class="form-group">
-            <label class="label required">Дата выдачи</label>
-            <input type="date" class="input" name="passport.issued_at">
-          </div>
+        <div class="form-group">
+          <label class="label required">Дата выдачи</label>
+          <input type="date" class="input" name="passport.issued_at">
         </div>
         <div class="form-group">
           <label class="label required">Срок действия</label>
@@ -230,6 +237,7 @@
           <select class="select" name="address.country">
             <option value="RU">Россия</option>
             <option value="KZ">Казахстан</option>
+            <option value="BY">Беларусь</option>
             <option value="OTHER">Другое</option>
           </select>
         </div>
@@ -268,19 +276,10 @@
           <label class="label">Должность</label>
           <input type="text" class="input" name="employment.position" placeholder="Должность">
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="label">Доход (в месяц)</label>
-            <input type="number" class="input" name="employment.income_amount" placeholder="Сумма" min="0" step="1000">
-          </div>
-          <div class="form-group">
-            <label class="label">Валюта</label>
-            <select class="select" name="employment.income_currency">
-              <option value="RUB">RUB</option>
-              <option value="USD">USD</option>
-              <option value="EUR">EUR</option>
-            </select>
-          </div>
+        <div class="form-group">
+          <label class="label">Доход (в месяц, RUB)</label>
+          <input type="number" class="input" name="employment.income_amount" placeholder="Сумма" min="0" step="1000">
+          <input type="hidden" name="employment.income_currency" value="RUB">
         </div>
 
         <div class="actions" style="margin-top: 24px;">
@@ -306,15 +305,29 @@
         <div class="form-group" style="margin-top: 16px;">
           <label class="label">Тип документа</label>
           <select class="select" id="doc-type">
-            <option value="passport_scan">Скан паспорта</option>
+            <option value="passport_scan">Скан паспорта (распознавание и подстановка в профиль)</option>
             <option value="photo">Фото на визу</option>
             <option value="employment_letter">Справка с работы</option>
             <option value="bank_statement">Выписка из банка</option>
             <option value="other">Другое</option>
           </select>
         </div>
+        <p id="passport-scan-status" class="hint passport-scan-status" style="display: none;"></p>
 
         <ul class="doc-list" id="doc-list"></ul>
+      </div>
+    </section>
+
+    <!-- Экран: собеседование с консулом (виза в США) -->
+    <section id="screen-interview" class="screen">
+      <h1 class="screen__title">Собеседование с консулом для визы в США</h1>
+      <p class="screen__subtitle">Тренировочный диалог. Отвечайте как на реальном собеседовании — консул задаёт вопросы, вы отвечаете текстом.</p>
+      <div class="card interview-card">
+        <div class="chat-messages interview-chat-messages" id="interview-chat-messages"></div>
+        <form class="chat-form interview-chat-form" id="interview-chat-form">
+          <input type="text" class="chat-input" id="interview-chat-input" placeholder="Ваш ответ консулу…" autocomplete="off">
+          <button type="submit" class="btn btn--primary chat-send">Отправить</button>
+        </form>
       </div>
     </section>
   </main>
@@ -344,10 +357,26 @@
     <div class="footer__support">Поддержка: <a href="tel:+79262802222" class="footer__phone">+7 926 280 2222</a></div>
     <div class="footer__copy">Прототип визового помощника Т-Путешествия</div>
   </footer>
+
+  <!-- Общий календарь для полей даты (в дизайне платформы) -->
+  <div class="date-pick-calendar" id="date-pick-calendar" aria-hidden="true"></div>
+
+  <!-- Кастомное уведомление (вместо alert) -->
+  <div class="app-alert-overlay" id="app-alert-overlay" aria-hidden="true">
+    <div class="app-alert-panel" role="dialog" aria-modal="true" aria-labelledby="app-alert-title">
+      <h2 class="app-alert__title" id="app-alert-title">Уведомление</h2>
+      <p class="app-alert__message" id="app-alert-message"></p>
+      <div class="app-alert__actions">
+        <button type="button" class="btn btn--primary app-alert__btn" id="app-alert-ok">OK</button>
+      </div>
+    </div>
+  </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/4.1.1/tesseract.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

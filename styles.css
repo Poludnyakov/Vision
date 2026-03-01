@@ -78,12 +78,12 @@ h1, h2, h3, .screen__title, .card__title {
   font-weight: 600;
 }
 
-/* Header — Liquid Glass: полупрозрачное «стекло», размытие фона */
+/* Header — Liquid Glass: полупрозрачное стекло с размытием */
 .header {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(18, 18, 18, 0.72);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   padding: 16px 24px;
   display: flex;
   align-items: center;
@@ -91,7 +91,7 @@ h1, h2, h3, .screen__title, .card__title {
   position: sticky;
   top: 0;
   z-index: 10;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   isolation: isolate;
 }
 
@@ -268,12 +268,15 @@ h1, h2, h3, .screen__title, .card__title {
   gap: 8px;
 }
 
-/* Кнопка «Выйти» в навбаре — та же высота, что и «Мой профиль» (переопределяем .btn) */
+/* Кнопка «Выйти» в навбаре — ровно та же высота, что и «Мой профиль» */
 .nav .btn.nav__link {
-  padding: 10px 16px;
-  font-size: 14px;
-  font-weight: 500;
+  padding: 10px 16px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  height: 40px !important;
   min-height: 40px;
+  line-height: 1.25;
+  box-sizing: border-box;
 }
 
 .nav__link:hover {
@@ -520,33 +523,44 @@ a.nav__link:hover {
   border-radius: var(--radius-sm);
   overflow: hidden;
   margin-bottom: 12px;
-  background: var(--tb-black-soft);
+  background: #a8a8a8;
 }
 
 .country-card__img-wrap::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(13, 13, 13, 0.75) 0%, transparent 50%);
+  background: linear-gradient(to top, rgba(168, 168, 168, 0.2) 0%, transparent 55%);
   pointer-events: none;
 }
 
 .country-card__img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
-  filter: brightness(0.92) contrast(1.08) saturate(0.88);
   transition: filter 0.25s;
+  filter: brightness(1.05) contrast(1.02);
+  mix-blend-mode: lighten;
 }
 
 .country-card:hover .country-card__img,
 .country-card.selected .country-card__img {
-  filter: brightness(1) contrast(1.05) saturate(0.95);
+  filter: brightness(1.1) contrast(1.05) saturate(0.98);
+}
+
+.country-card[data-country="usa"] .country-card__img {
+  object-position: center 50%;
+  transform: scale(0.92);
+  filter: brightness(1.05) contrast(1.02);
+}
+.country-card[data-country="usa"]:hover .country-card__img,
+.country-card[data-country="usa"].selected .country-card__img {
+  filter: brightness(1.1) contrast(1.05) saturate(0.98);
 }
 
 .country-card.selected .country-card__img-wrap::after {
-  background: linear-gradient(to top, rgba(13, 13, 13, 0.5) 0%, rgba(255, 221, 45, 0.08) 100%);
+  background: linear-gradient(to top, rgba(168, 168, 168, 0.12) 0%, rgba(255, 221, 45, 0.06) 100%);
 }
 
 .country-card__name {
@@ -557,6 +571,399 @@ a.nav__link:hover {
 
 .visa-type-select {
   margin-top: 24px;
+}
+
+/* Кастомный селектор типа визы (интегрирован в UI) */
+.visa-type-custom {
+  position: relative;
+  width: 100%;
+}
+
+.visa-type-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: var(--font);
+  color: var(--tb-white);
+  background: var(--tb-black-soft);
+  border: 1px solid var(--tb-gray-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.visa-type-trigger:hover {
+  border-color: var(--tb-gray-muted);
+}
+
+.visa-type-trigger[aria-expanded="true"] {
+  border-color: var(--tb-yellow);
+  box-shadow: 0 0 0 2px var(--tb-yellow-soft);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.visa-type-trigger__icon {
+  flex-shrink: 0;
+  color: var(--tb-gray-text);
+  transition: transform 0.2s;
+}
+
+.visa-type-trigger[aria-expanded="true"] .visa-type-trigger__icon {
+  transform: rotate(180deg);
+  color: var(--tb-white);
+}
+
+.visa-type-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--tb-black-soft);
+  border: 1px solid var(--tb-gray-border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  box-shadow: var(--shadow);
+  z-index: 15;
+  display: none;
+}
+
+.visa-type-dropdown.is-open {
+  display: block;
+}
+
+.visa-type-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: var(--font);
+  color: var(--tb-white);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.visa-type-option:hover {
+  background: var(--tb-gray-card);
+}
+
+.visa-type-option--selected {
+  background: #006EFF;
+  color: var(--tb-white);
+}
+
+.visa-type-option--selected:hover {
+  background: #0056cc;
+}
+
+.visa-type-option__check {
+  flex-shrink: 0;
+  display: none;
+  color: var(--tb-white);
+}
+
+.visa-type-option--selected .visa-type-option__check {
+  display: block;
+}
+
+/* Кастомные селекты в дизайне платформы (все select.select) */
+.custom-select-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.custom-select-native {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+}
+
+.custom-select-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: var(--font);
+  color: var(--tb-white);
+  background: var(--tb-black-soft);
+  border: 1px solid var(--tb-gray-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.custom-select-trigger:hover {
+  border-color: var(--tb-gray-muted);
+}
+
+.custom-select-wrap.is-open .custom-select-trigger {
+  border-color: var(--tb-yellow);
+  box-shadow: 0 0 0 2px var(--tb-yellow-soft);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.custom-select-trigger__icon {
+  flex-shrink: 0;
+  color: var(--tb-gray-text);
+  transition: transform 0.2s;
+}
+
+.custom-select-wrap.is-open .custom-select-trigger__icon {
+  transform: rotate(180deg);
+}
+
+.custom-select-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--tb-black-soft);
+  border: 1px solid var(--tb-gray-border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  box-shadow: var(--shadow);
+  z-index: 15;
+  max-height: 240px;
+  overflow-y: auto;
+  display: none;
+}
+
+.custom-select-wrap.is-open .custom-select-dropdown {
+  display: block;
+}
+
+.custom-select-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: var(--font);
+  color: var(--tb-white);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.custom-select-option:hover {
+  background: var(--tb-gray-card);
+}
+
+.custom-select-option--selected {
+  background: #006EFF;
+  color: var(--tb-white);
+}
+
+.custom-select-option__check {
+  flex-shrink: 0;
+  display: none;
+  color: var(--tb-white);
+}
+
+.custom-select-option--selected .custom-select-option__check {
+  display: block;
+}
+
+/* Кастомный календарь в дизайне платформы */
+.date-pick-wrap {
+  position: relative;
+}
+
+.date-pick-wrap .custom-select-native {
+  height: 48px;
+}
+
+.date-pick-calendar {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background: var(--tb-gray-card);
+  border: 1px solid var(--tb-gray-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  z-index: 20;
+  padding: 16px;
+  min-width: 280px;
+  display: none;
+}
+
+.date-pick-wrap.is-open .date-pick-calendar {
+  display: block;
+}
+
+.date-pick-calendar__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.date-pick-calendar__month-btn,
+.date-pick-calendar__year-btn {
+  background: none;
+  border: none;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--tb-white);
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+}
+.date-pick-calendar__month-btn:hover,
+.date-pick-calendar__year-btn:hover {
+  background: var(--tb-yellow-soft);
+  color: var(--tb-yellow);
+}
+.date-pick-calendar__month {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--tb-white);
+}
+.date-pick-calendar__picker {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.date-pick-calendar__picker--months {
+  grid-template-columns: repeat(3, 1fr);
+}
+.date-pick-calendar__picker--years {
+  grid-template-columns: repeat(4, 1fr);
+}
+.date-pick-calendar__picker-item {
+  border: none;
+  background: var(--tb-black-soft);
+  color: var(--tb-white);
+  font-size: 13px;
+  padding: 10px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: center;
+  font-family: var(--font);
+}
+.date-pick-calendar__picker-item:hover {
+  background: var(--tb-gray-border);
+}
+.date-pick-calendar__picker-item--selected {
+  background: var(--tb-yellow);
+  color: var(--tb-text-dark);
+}
+
+.date-pick-calendar__nav {
+  display: flex;
+  gap: 4px;
+}
+
+.date-pick-calendar__nav-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: var(--tb-black-soft);
+  color: var(--tb-white);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.date-pick-calendar__nav-btn:hover {
+  background: var(--tb-yellow);
+  color: var(--tb-text-dark);
+}
+
+.date-pick-calendar__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 8px;
+  font-size: 11px;
+  color: var(--tb-gray-text);
+  text-align: center;
+}
+
+.date-pick-calendar__days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.date-pick-calendar__day {
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 36px;
+  margin: 0 auto;
+  border: none;
+  background: none;
+  color: var(--tb-white);
+  font-size: 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.date-pick-calendar__day:hover {
+  background: var(--tb-gray-border);
+}
+
+.date-pick-calendar__day--other-month {
+  color: var(--tb-gray-muted);
+}
+
+.date-pick-calendar__day--selected {
+  background: #006EFF;
+  color: var(--tb-white);
+}
+
+.date-pick-calendar__day--today {
+  border: 1px solid var(--tb-yellow);
+}
+
+.date-pick-calendar__footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--tb-gray-border);
+}
+
+.date-pick-calendar__link {
+  background: none;
+  border: none;
+  color: var(--tb-yellow);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: var(--font);
+}
+
+.date-pick-calendar__link:hover {
+  text-decoration: underline;
 }
 
 /* Documents */
@@ -929,6 +1336,13 @@ a.nav__link:hover {
   max-width: 720px;
 }
 
+.export-status-banner {
+  border-left: 4px solid var(--tb-yellow);
+}
+.export-status-banner__text {
+  color: var(--tb-white);
+}
+
 .export-section {
   margin-bottom: 24px;
 }
@@ -954,12 +1368,12 @@ a.nav__link:hover {
   border: 1px solid var(--tb-gray-border);
 }
 
-/* Кнопка помощника: справа снизу, скруглённый прямоугольник как «Мой профиль» */
+/* Кнопка помощника: строго справа снизу, скруглённый прямоугольник */
 .chat-fab {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  left: auto;
+  position: fixed !important;
+  bottom: 24px !important;
+  right: 24px !important;
+  left: auto !important;
   padding: 10px 16px;
   min-height: 40px;
   border-radius: var(--radius-btn);
@@ -977,6 +1391,7 @@ a.nav__link:hover {
   box-shadow: var(--shadow-lg);
   z-index: 50;
   transition: background 0.15s, transform 0.05s, box-shadow 0.15s;
+  direction: ltr;
 }
 
 .chat-fab:hover {
@@ -1006,12 +1421,14 @@ a.nav__link:hover {
   padding: 24px;
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transition: opacity 0.2s, visibility 0.2s;
 }
 
 .chat-overlay.is-open {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 
 .chat-overlay.is-open .chat-panel {
@@ -1077,6 +1494,26 @@ a.nav__link:hover {
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.interview-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+.interview-chat-messages {
+  min-height: 320px;
+  max-height: 55vh;
+}
+
+.interview-chat-form {
+  border-top: 1px solid var(--tb-gray-border);
+  padding: 16px 20px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
 .chat-msg {
@@ -1157,4 +1594,62 @@ a.nav__link:hover {
 
 @keyframes chat-blink {
   50% { opacity: 0.3; }
+}
+
+/* Кастомные уведомления (вместо alert) — в дизайне сайта */
+.app-alert-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 24px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s, visibility 0.2s;
+}
+
+.app-alert-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.app-alert-panel {
+  width: 100%;
+  max-width: 400px;
+  background: var(--tb-gray-card);
+  border: 1px solid var(--tb-gray-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 24px;
+}
+
+.app-alert__title {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--tb-white);
+  font-family: var(--font);
+}
+
+.app-alert__message {
+  margin: 0 0 20px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--tb-gray-nav);
+  font-family: var(--font);
+}
+
+.app-alert__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.app-alert__btn {
+  min-width: 100px;
 }

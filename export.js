@@ -5,6 +5,7 @@
   var params = new URLSearchParams(window.location.search);
   var country = params.get('country') || 'schengen';
   var visaType = params.get('visa_type') || 'tourist';
+  var submitted = params.get('submitted') === '1';
 
   var COUNTRY_NAMES = { schengen: 'Шенген', usa: 'США', uk: 'Великобритания', japan: 'Япония' };
   var VISA_NAMES = { tourist: 'Туристическая', business: 'Деловая', transit: 'Транзитная' };
@@ -43,6 +44,142 @@
       (sectionCountry === 'uk' && country === 'uk') ||
       (sectionCountry === 'other' && country !== 'usa' && country !== 'uk');
     el.style.display = show ? 'block' : 'none';
+  });
+  if (country === 'uk') {
+    var ukBlankLink = document.getElementById('export-uk-blank');
+    if (ukBlankLink) ukBlankLink.style.display = 'inline-flex';
+  }
+
+  if (country === 'usa') {
+    function setUsaAppliedForUser() {
+      var key = 'visa_assistant_usa_applied_anon';
+      if (supabase) {
+        supabase.auth.getUser().then(function (r) {
+          var user = r.data && r.data.user;
+          if (user && user.id) key = 'visa_assistant_usa_applied_' + user.id;
+          try { localStorage.setItem(key, '1'); } catch (_) {}
+        });
+      } else {
+        try { localStorage.setItem(key, '1'); } catch (_) {}
+      }
+    }
+    setUsaAppliedForUser();
+    var interviewBanner = document.getElementById('export-interview-banner');
+    if (interviewBanner) interviewBanner.style.display = 'block';
+  }
+  if (submitted) {
+    var statusBanner = document.getElementById('export-status-banner');
+    if (statusBanner) statusBanner.style.display = 'block';
+  }
+
+  function getProfileFromSessionStorage() {
+    try {
+      var raw = sessionStorage.getItem('visa_export_profile');
+      return raw ? JSON.parse(raw) : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function fillFormsFromProfile(profile) {
+    if (!profile || typeof profile !== 'object') return;
+    var p = profile.personal || {};
+    var pass = profile.passport || {};
+    var contact = profile.contact || {};
+    var emp = profile.employment || {};
+    var ukForm = document.getElementById('uk-form');
+    if (ukForm) {
+      if (pass.number) { var el = ukForm.elements['passport_number']; if (el) el.value = pass.number; }
+      if (pass.issued_at) { var el = ukForm.elements['passport_issued_at']; if (el) el.value = pass.issued_at; }
+      if (pass.expires_at) { var el = ukForm.elements['passport_expires_at']; if (el) el.value = pass.expires_at; }
+      if (contact.email) { var el = ukForm.elements['contact_email']; if (el) el.value = contact.email; }
+      if (contact.phone) { var el = ukForm.elements['contact_phone']; if (el) el.value = contact.phone; }
+      if (p.marital_status) { var el = ukForm.elements['marital_status']; if (el) el.value = p.marital_status; }
+      if (emp.income_amount) { var el = ukForm.elements['income_monthly']; if (el) el.value = String(emp.income_amount); }
+    }
+  }
+
+  function loadProfileAndFillForms() {
+    var profile = getProfileFromSessionStorage();
+    if (profile) fillFormsFromProfile(profile);
+    if (supabase) {
+      supabase.auth.getUser().then(function (r) {
+        var user = r.data && r.data.user;
+        if (!user) return;
+        supabase.from('profiles').select('data').eq('user_id', user.id).maybeSingle()
+          .then(function (res) {
+            if (res.data && res.data.data) fillFormsFromProfile(res.data.data);
+          });
+      });
+    }
+  }
+
+  loadProfileAndFillForms();
+
+  function getExportDataForPdf() {
+    var profile = getProfileFromSessionStorage();
+    var ukForm = null;
+    if (country === 'uk') {
+      var f = document.getElementById('uk-form');
+      if (f) {
+        ukForm = {};
+        f.querySelectorAll('input, select, textarea').forEach(function (el) {
+          if (el.name) ukForm[el.name] = el.type === 'number' ? el.value : (el.value || '').trim();
+        });
+      }
+    }
+    return { profile: profile || {}, ukForm: ukForm };
+  }
+
+  document.getElementById('export-download-filled').addEventListener('click', function (e) {
+    e.preventDefault();
+    var data = getExportDataForPdf();
+    var profile = data.profile;
+    if (typeof window.jspdf === 'undefined') return;
+    var jsPDF = window.jspdf.jsPDF;
+    var doc = new jsPDF();
+    doc.setFontSize(18);
+    doc.text('Визовая заявка', 14, 20);
+    doc.setFontSize(11);
+    doc.text((COUNTRY_NAMES[country] || country) + ', ' + (VISA_TYPE_NAMES[visaType] || visaType), 14, 28);
+    doc.setFontSize(10);
+    var y = 36;
+    var line = function (label, value) {
+      if (value == null || String(value).trim() === '') return;
+      var s = label + ': ' + String(value).trim().substring(0, 88);
+      if (s.length > 88) s = s.substring(0, 85) + '...';
+      doc.text(s, 14, y);
+      y += 6;
+    };
+    if (country === 'uk' && data.ukForm) {
+      var ukLabels = { passport_number: 'Номер паспорта', passport_issued_at: 'Дата выдачи', passport_expires_at: 'Срок действия', contact_email: 'Email', contact_phone: 'Телефон', marital_status: 'Семейное положение', spouse_name: 'Имя супруга/партнёра', income_monthly: 'Ежемесячный доход (RUB)', expenses_monthly: 'Ежемесячные расходы', sources_of_funds: 'Источники средств', had_visas: 'Визы в UK/другие страны', had_refusals: 'Отказы в визе', visas_refusals_detail: 'Подробности виз/отказов', criminal_record: 'Судимости', criminal_record_detail: 'Подробности судимостей', additional_info: 'Дополнительные сведения', work_employer_1: 'Работодатель (1)', work_position_1: 'Должность (1)', work_from_1: 'Дата начала (1)', work_to_1: 'Дата окончания (1)', travel_country_1: 'Страна поездки (1)', travel_purpose_1: 'Цель поездки (1)', travel_from_1: 'Дата въезда (1)', travel_to_1: 'Дата выезда (1)' };
+      var p = profile.personal || {};
+      line('Фамилия', p.last_name);
+      line('Имя', p.first_name);
+      line('Дата рождения', p.birth_date);
+      line('Место рождения', p.birth_place);
+      Object.keys(data.ukForm).forEach(function (k) {
+        var v = data.ukForm[k];
+        if (v == null || String(v).trim() === '') return;
+        line(ukLabels[k] || k, v);
+      });
+    } else {
+      var p = profile.personal || {}, pass = profile.passport || {}, contact = profile.contact || {}, addr = profile.address || {}, emp = profile.employment || {};
+      var labels = { surname: 'Фамилия', first_name: 'Имя', birth_date: 'Дата рождения', birth_place: 'Место рождения', passport_number: 'Номер паспорта', passport_issued_at: 'Дата выдачи', passport_expires_at: 'Срок действия', email: 'Email', phone: 'Телефон', address_line: 'Адрес', income: 'Доход' };
+      line(labels.surname, p.last_name);
+      line(labels.first_name, p.first_name);
+      line(labels.birth_date, p.birth_date);
+      line(labels.birth_place, p.birth_place);
+      line(labels.passport_number, pass.number);
+      line(labels.passport_issued_at, pass.issued_at);
+      line(labels.passport_expires_at, pass.expires_at);
+      line(labels.email, contact.email);
+      line(labels.phone, contact.phone);
+      line(labels.address_line, addr.line);
+      line(labels.income, emp.income_amount ? emp.income_amount + ' ' + (emp.income_currency || 'RUB') : '');
+    }
+    var filename = 'visa-' + country + '-' + (profile.personal && profile.personal.last_name ? String(profile.personal.last_name).replace(/\s+/g, '-') : 'application') + '.pdf';
+    doc.save(filename);
   });
 
   function escapeHtml(s) {
