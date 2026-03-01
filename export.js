@@ -221,7 +221,7 @@
         c.width = img.naturalWidth;
         c.height = img.naturalHeight;
         c.getContext('2d').drawImage(img, 0, 0);
-        done(c.toDataURL('image/png'));
+        done(c.toDataURL('image/png'), img.naturalWidth, img.naturalHeight);
         return;
       } catch (e) {}
     }
@@ -232,12 +232,12 @@
         c.width = loader.naturalWidth;
         c.height = loader.naturalHeight;
         c.getContext('2d').drawImage(loader, 0, 0);
-        done(c.toDataURL('image/png'));
+        done(c.toDataURL('image/png'), loader.naturalWidth, loader.naturalHeight);
       } catch (e) {
-        done(null);
+        done(null, 0, 0);
       }
     };
-    loader.onerror = function () { done(null); };
+    loader.onerror = function () { done(null, 0, 0); };
     loader.src = 'images/us-seal.png';
   }
 
@@ -679,14 +679,25 @@
     doc.text('Any personal information gathered in this application as well as additional information submitted for the visa application (hereinafter referred to as "Retained Personal Information") will be handled appropriately in accordance with the Act on the Protection of Personal Information Held by Administrative Organs (Act No. 58 of 2003). Retained Personal Information will only be used for the purpose of processing the visa application and to the extent necessary for the purposes stated in Article 8 of the Act.', margin, y2, { maxWidth: pageW - 2 * margin });
   }
 
-  /** USA colophon: seal top-left, horizontal line, page number centered. Seal from sealDataUrl or drawn circle + "U.S.". */
-  function drawUsaColophon(doc, pageW, margin, pageNum, totalPages, sealDataUrl) {
+  /** USA colophon: seal top-left, horizontal line, page number centered. Seal from sealDataUrl (aspect ratio preserved) or drawn circle + "U.S.". */
+  function drawUsaColophon(doc, pageW, margin, pageNum, totalPages, sealDataUrl, sealImgW, sealImgH) {
     var yTop = 6;
     var yBottom = 24;
     var bandCenter = (yTop + yBottom) / 2;
-    var sealSize = 16;
+    var sealSize = 18;
     var leftX = margin + 2;
-    if (sealDataUrl) {
+    if (sealDataUrl && sealImgW > 0 && sealImgH > 0) {
+      try {
+        var maxMm = sealSize;
+        var r = sealImgW / sealImgH;
+        var drawW = r >= 1 ? maxMm : maxMm * r;
+        var drawH = r >= 1 ? maxMm / r : maxMm;
+        doc.addImage(sealDataUrl, 'PNG', leftX, bandCenter - drawH / 2, drawW, drawH);
+        leftX += drawW + 4;
+      } catch (e) {
+        leftX += 2;
+      }
+    } else if (sealDataUrl) {
       try {
         doc.addImage(sealDataUrl, 'PNG', leftX, bandCenter - sealSize / 2, sealSize, sealSize);
         leftX += sealSize + 4;
@@ -732,6 +743,8 @@
     var totalPages = 8;
     var usaOpts = data.usaColophonOpts || {};
     var sealDataUrl = usaOpts.sealDataUrl || null;
+    var sealImgW = usaOpts.sealImgW || 0;
+    var sealImgH = usaOpts.sealImgH || 0;
 
     function v(x) {
       if (x == null) return dash;
@@ -741,7 +754,7 @@
     function newPage() {
       doc.addPage();
       pageNum++;
-      y = drawUsaColophon(doc, pageW, margin, pageNum, totalPages, sealDataUrl);
+      y = drawUsaColophon(doc, pageW, margin, pageNum, totalPages, sealDataUrl, sealImgW, sealImgH);
     }
     function sectionTitle(title) {
       if (y > 268) newPage();
@@ -775,7 +788,7 @@
       y += lineH + 3;
     }
 
-    var y = drawUsaColophon(doc, pageW, margin, 1, totalPages, sealDataUrl);
+    var y = drawUsaColophon(doc, pageW, margin, 1, totalPages, sealDataUrl, sealImgW, sealImgH);
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
     doc.text('US VISA QUESTIONNAIRE (DS-160 form)', pageW / 2, y + 2, { align: 'center' });
@@ -1251,8 +1264,10 @@
       doSave();
     } else if (country === 'usa') {
       data.usaColophonOpts = data.usaColophonOpts || {};
-      getUsaSealDataUrl(function (sealDataUrl) {
+      getUsaSealDataUrl(function (sealDataUrl, sealW, sealH) {
         data.usaColophonOpts.sealDataUrl = sealDataUrl;
+        data.usaColophonOpts.sealImgW = sealW || 0;
+        data.usaColophonOpts.sealImgH = sealH || 0;
         buildUsaTemplatePdf(doc, data);
         doSave();
       });
